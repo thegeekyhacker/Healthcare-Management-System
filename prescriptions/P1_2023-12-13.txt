@@ -1,0 +1,10 @@
+Prescription Date: 2023-12-13
+Doctor ID: D1
+Patient ID: P1
+Appointment ID: A1
+
+Prescription:
+
+ibuprofen:
+   Instruction Before meal Eat During Breakfast
+:

@@ -1,0 +1,11 @@
+Prescription Date: 2023-12-07
+Doctor ID: D1
+Patient ID: P1
+Appointment ID: A1
+
+Prescription:
+
+ibuprofen:
+   Instruction Before meal Eat During Lunch
+dolo:
+   Instruction After meal Eat During Lunch

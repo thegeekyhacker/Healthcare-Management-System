@@ -1,0 +1,54 @@
+{
+  "log": [
+    {
+      "level": "error",
+      "message": "Failed to connect to DB",
+      "resourceId": "server-1234",
+      "timestamp": "2023-09-15T08:00:00Z",
+      "traceId": "abc-xyz-123",
+      "spanId": "span-456",
+      "commit": "5e5342f",
+      "metadata": {
+        "parentResourceId": "server-0987"
+      }
+    },
+    {
+      "level": "error",
+      "message": "Low disk space on /var/log",
+      "resourceId": "server-5678",
+      "timestamp": "2023-09-16T12:34:56Z",
+      "traceId": "def-ghi-456",
+      "spanId": "span-789",
+      "commit": "1234567",
+      "metadata": {
+        "mountPoint": "/var/log"
+      }
+    },
+    {
+      "level": "info",
+      "message": "Processing user request for /products/1234",
+      "resourceId": "api-gateway-9012",
+      "timestamp": "2023-09-17T15:00:01Z",
+      "traceId": "jkl-mno-789",
+      "spanId": "span-012",
+      "commit": "abcdefg",
+      "metadata": {
+        "userId": "user-4567",
+        "productId": "1234"
+      }
+    },
+    {
+      "level": "debug",
+      "message": "Initializing database connection",
+      "resourceId": "db-service-3456",
+      "timestamp": "2023-09-18T17:23:45Z",
+      "traceId": "pqr-stu-012",
+      "spanId": "span-345",
+      "commit": "9876543",
+      "metadata": {
+        "database": "mydb",
+        "user": "dbuser"
+      }
+    }
+  ]
+}

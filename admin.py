@@ -7,19 +7,23 @@ import newpatient
 import opdbill
 import bill
 from pqueue import *
-# from pqueue import add_to_queue, display_schedule, shared_queue 
-con = sqltor.connect(host="localhost",user="root",passwd = "admin",database = "hcm")
+# from pqueue import add_to_queue, display_schedule, shared_queue
+con = sqltor.connect(host="localhost", user="root",
+                     passwd="admin", database="healthcare_management")
 cursor = con.cursor()
+
+
 def admin(userid):
-    cursor.execute(f"Select first_name,middle_name,last_name from administrativestaff where admin_id = '{userid}'")
+    cursor.execute(
+        f"Select first_name,middle_name,last_name from administrativestaff where admin_id = '{userid}'")
     result = cursor.fetchall()
     first_name = result[0][0]
     middle_name = result[0][1]
     last_name = result[0][2]
-    aname = first_name + ' ' + middle_name + ' ' + last_name;
+    aname = first_name + ' ' + middle_name + ' ' + last_name
     # print(aname)
     greet = greeting.greeting()
-    greet = greet  + ' ' + aname
+    greet = greet + ' ' + aname
     print(greet)
     while True:
         # print(greet)
@@ -27,7 +31,7 @@ def admin(userid):
         print("2. Check Appointments (appointments)\n")
         print("3. Create Appointment(creatapp)\n")
         print("4. New Patient Registration(reg)\n")
-        print("5. OPD Bill(opdB)\n")
+        print("5. OPD Bill(opdbill)\n")
         print("6. Hospital Bill(hbill)\n")
         print("7. Add to queue(add)\n")
         print("8. View queue(view)\n")
@@ -43,14 +47,14 @@ def admin(userid):
             createapp.createapp()
         elif ans.lower() == 'reg':
             newpatient.newpatient()
-        elif ans.lower() == 'opdB':
+        elif ans.lower() == 'opdbill':
             opdbill.opdbill(userid)
-        elif ans.lower() == 'hbill': 
+        elif ans.lower() == 'hbill':
             bill.hbill(userid)
         elif ans.lower() == 'add':
             doctorid = input("Enter Doctor Id : ")
             patientid = input("Enter patient Id : ")
-            add_to_queue(doctorid,patientid)
+            add_to_queue(doctorid, patientid)
             # h.display_schedule("D1")
         elif ans.lower() == 'view':
             docid = input("Enter the Doctor Id : ")
@@ -61,4 +65,4 @@ def admin(userid):
         else:
             print("Kindly enter a valid choice")
 
-admin('A1')
+# admin('A1')

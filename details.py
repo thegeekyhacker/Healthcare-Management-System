@@ -1,10 +1,12 @@
 import mysql.connector as sqltor
 import os
 # import datetime
-from datetime import date,datetime
+from datetime import date, datetime
 
-con = sqltor.connect(host="localhost", user="root", passwd="admin", database="hcm")
+con = sqltor.connect(host="localhost", user="root",
+                     passwd="admin", database="healthcare_management")
 cursor = con.cursor()
+
 
 def calculate_age(birthdate_str):
     # Parse the input string into a datetime.date object
@@ -14,12 +16,15 @@ def calculate_age(birthdate_str):
     current_date = date.today()
 
     # Calculate the age
-    age = current_date.year - birthdate.year - ((current_date.month, current_date.day) < (birthdate.month, birthdate.day))
+    age = current_date.year - birthdate.year - \
+        ((current_date.month, current_date.day) < (birthdate.month, birthdate.day))
 
     return age
 
+
 def details(patientid):
-    cursor.execute(f"select first_name, middle_name, last_name, date_of_birth, gender, medical_history, blood_group from patients where patient_id = '{patientid}'")
+    cursor.execute(
+        f"select first_name, middle_name, last_name, date_of_birth, gender, medical_history, blood_group from patients where patient_id = '{patientid}'")
     data = cursor.fetchall()
 
     pname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
@@ -33,7 +38,8 @@ def details(patientid):
     files = os.listdir(folder_name)
 
     # Filter files based on everything before the '_' matching with patient id
-    matching_files = [file for file in files if file.split('_')[0] == patientid]
+    matching_files = [file for file in files if file.split('_')[
+        0] == patientid]
 
     # Print current date and time
     current_date = datetime.now().strftime("%Y-%m-%d")

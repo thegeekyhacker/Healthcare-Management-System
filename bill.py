@@ -6,8 +6,10 @@ from datetime import datetime
 import mysql.connector as sqltor
 import sendmailh
 
-con = sqltor.connect(host="localhost", user="root", passwd="admin", database="hcm")
+con = sqltor.connect(host="localhost", user="root",
+                     passwd="admin", database="healthcare_management")
 cursor = con.cursor()
+
 
 def hbill(adminid):
     cursor.execute("select * from bill")
@@ -15,37 +17,42 @@ def hbill(adminid):
     bid = 'B' + str(len(data) + 1)
     doctorid = input("Enter the Doctor Id: ")
     patientid = input("Enter the Patient Id: ")
-    
+
     # Generate Bill_Id
     # oid = 'B' + str(len(data) + 1)
-    
+
     date = datetime.now().strftime("%Y-%m-%d")
     time = datetime.now().strftime("%H:%M:%S")
-    cursor.execute(f"select visitation_charge from doctors where doctor_id = '{doctorid}'")
+    cursor.execute(
+        f"select visitation_charge from doctors where doctor_id = '{doctorid}'")
     data = cursor.fetchall()
     visit_charge = data[0][0]
-    
+
     # Get Room Type and calculate Room Cost
     roomtype = input("Enter the Room Type (Double/Single/Suite): ")
-    cursor.execute(f"select Room_Cost from roomexpenses where Room_Type = '{roomtype}'")
+    cursor.execute(
+        f"select Room_Cost from roomexpenses where Room_Type = '{roomtype}'")
     data = cursor.fetchall()
     if not data:
         print("Invalid Room Type. Please enter a valid room type.")
         con.close()
         return
-    
+
     room_cost = data[0][0]
-    
+
     amt = 0
     test_names = []
     test_costs = {}
-    cursor.execute(f"select doctor_name from doctors where doctor_id = '{doctorid}'")
+    cursor.execute(
+        f"select doctor_name from doctors where doctor_id = '{doctorid}'")
     data = cursor.fetchall()
     dname = data[0][0]
-    cursor.execute(f"select first_name,middle_name,last_name from patients where patient_id = '{patientid}'")
+    cursor.execute(
+        f"select first_name,middle_name,last_name from patients where patient_id = '{patientid}'")
     data = cursor.fetchall()
     pname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
-    cursor.execute(f"select first_name,middle_name,last_name from administrativestaff where admin_id = '{adminid}'")
+    cursor.execute(
+        f"select first_name,middle_name,last_name from administrativestaff where admin_id = '{adminid}'")
     data = cursor.fetchall()
     aname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
 
@@ -54,7 +61,8 @@ def hbill(adminid):
         if testname.lower() == "n/a":
             break
         else:
-            cursor.execute(f"select test_cost from testexpenses where test = '{testname}'")
+            cursor.execute(
+                f"select test_cost from testexpenses where test = '{testname}'")
             data = cursor.fetchall()
             if not data:
                 print("No such test exists.")
@@ -65,9 +73,10 @@ def hbill(adminid):
             test_costs[testname] = data[0][0]
 
     total_cost = visit_charge + amt + room_cost
-    
+
     # Get Payment Status
-    payment_status = input("Enter the Payment Status (e.g., Paid, Pending, etc.): ")
+    payment_status = input(
+        "Enter the Payment Status (e.g., Paid, Pending, etc.): ")
 
     cursor.execute(
         f"insert into bill values ('{bid}','{date}',{total_cost},'{payment_status}','{time}','{patientid}','{adminid}','{doctorid}','{roomtype}','{','.join(test_names)}')"
@@ -137,7 +146,8 @@ def hbill(adminid):
 
     # Save the PDF
     c.save()
-    cursor.execute(f"select email_id from patients where patient_id = '{patientid}'")
+    cursor.execute(
+        f"select email_id from patients where patient_id = '{patientid}'")
     data = cursor.fetchall()
     receive = data[0][0]
     fname = bid + '_bill'

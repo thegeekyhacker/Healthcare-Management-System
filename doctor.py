@@ -5,19 +5,23 @@ import appointment
 import prescribe
 import details
 import voice
+import webbrowser
 from pqueue import *  # Import necessary functions and shared_queue object
 
 # h = HospitalScheduler()
-con = sqltor.connect(host="localhost",user="root",passwd = "admin",database = "hcm")
+con = sqltor.connect(host="localhost", user="root",
+                     passwd="admin", database="healthcare_management")
 cursor = con.cursor()
 
+
 def doctor(userid):
-    cursor.execute(f"SELECT doctor_name from doctors where doctor_id = '{userid}'")
-    result=cursor.fetchall()
+    cursor.execute(
+        f"SELECT doctor_name from doctors where doctor_id = '{userid}'")
+    result = cursor.fetchall()
     dname = result[0][0]
     # print(dname)
     greet = greeting.greeting()
-    greet = greet  + ' ' + dname
+    greet = greet + ' ' + dname
     print(greet)
     while True:
         # print(greet)
@@ -26,7 +30,8 @@ def doctor(userid):
         print("3. Check patient details(details)\n")
         print("4. Prescribe medicines(prescribe)\n")
         print("5. Call next patient(call)\n")
-        print("6. Logout\n")
+        print("6. Video call patient(video)\n")
+        print("7. Logout\n")
         ans = input("Enter the action you want to perform : ")
         if ans.lower() == 'schedule':
             schedule.schedule(userid)
@@ -38,7 +43,7 @@ def doctor(userid):
         elif ans.lower() == 'prescribe':
             patientid = input("Enter the Patient Id : ")
             appointmentid = input("Enter the Appointment Id : ")
-            prescribe.prescribe(userid,patientid,appointmentid)
+            prescribe.prescribe(userid, patientid, appointmentid)
         elif ans.lower() == 'view':
             doctorid = input("Enter the doctor id : ")
             display_schedule(doctorid)
@@ -46,9 +51,18 @@ def doctor(userid):
             removed_patient = remove_from_queue("D1")
             if removed_patient:
                 print(f"Patient {removed_patient} please come in.")
-                voice.text_to_speech(f"Patient {removed_patient} please come in.")
+                voice.text_to_speech(
+                    f"Patient {removed_patient} please come in.")
             else:
                 print("No patients in the queue for this doctor.")
+        elif ans.lower() == 'video':
+            patientid = input("Enter the Patient Id : ")
+            cursor.execute(
+                f"select phone_number from patients where patient_id = '{patientid}'")
+            result = cursor.fetchall()
+            phone_number = result[0][0]
+            whatsapp_url = f"https://wa.me/{phone_number}"
+            webbrowser.open(whatsapp_url)
         elif ans.lower() == 'logout':
             print("Have a nice day ahead!")
             break

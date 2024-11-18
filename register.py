@@ -2,13 +2,17 @@ import mysql.connector as sqltor
 import re
 import capture
 import passwordhide
-con = sqltor.connect(host="localhost",user="root",passwd="admin",database="hcm")
+import encode
+con = sqltor.connect(host="localhost", user="root",
+                     passwd="admin", database="healthcare_management")
 cursor = con.cursor()
+
 
 def is_space(str1):
     if str1 == " ":
         return True
     return False
+
 
 def is_valid_password(password):
     if len(password) < 10:
@@ -33,15 +37,21 @@ def register():
         query = f"select admin_id from administrativestaff"
         cursor.execute(query)
         data = cursor.fetchall()
-        new_num = int(data[-1][0][1:]) + 1
+        if not data:
+            new_num = 1
+        else:
+            new_num = int(data[-1][0][1:]) + 1
         new_id = 'A' + str(new_num)
         print(f"Your username is : {new_id}")
         password = passwordhide.get_hidden_input("Enter your password : ")
         while not is_valid_password(password):
             print("Password is not strong enough")
             print("A strong password must have atleast 1 number, 1 special character, 1 lowercase character, 1 uppercase character and should be atleast 10 characters long")
-            password = input("Enter your password : ")
-        cursor.execute(f"insert into credentials values('{new_id}','{password}')")
+            password = passwordhide.get_hidden_input("Enter your password : ")
+        password = encode.hash_passwd(password)
+        # print(password)
+        cursor.execute("insert into credentials values(%s,%s)",
+                       (new_id, password))
         print("Kindly enter your details (Fields with (*) are compulsory to enter. Enter a space for others where you want to leave the field empty)")
         fname = input("Enter your First Name : (*)")
         while is_space(fname):
@@ -82,7 +92,8 @@ def register():
         while is_space(ip):
             print("Kindly enter a valid IP Address")
             ip = input("Enter your IP Address : (*)")
-        cursor.execute(f"insert into administrativestaff values ('{new_id}','{fname}','{mname}','{lname}','{dob}','{gender}','{address}','{position}','{phone}','{email}','{ip}')")
+        cursor.execute(
+            f"insert into administrativestaff values ('{new_id}','{fname}','{mname}','{lname}','{dob}','{gender}','{address}','{position}','{phone}','{email}','{ip}')")
         print("Account created successfully")
         con.commit()
         print("Kindly take a picture for facial recognition")
@@ -97,15 +108,21 @@ def register():
         if len(data) == 0:
             new_id = 'D1'
         else:
-            new_num = int(data[-1][0][1:]) + 1
+            if not data:
+                new_num = 1
+            else:
+                new_num = int(data[-1][0][1:]) + 1
             new_id = 'D' + str(new_num)
         print(f"Your username is : {new_id}")
         password = passwordhide.get_hidden_input("Enter your password : ")
         while not is_valid_password(password):
             print("Password is not strong enough")
             print("A strong password must have atleast 1 number, 1 special character, 1 lowercase character, 1 uppercase character and should be atleast 10 characters long")
-            password = input("Enter your password : ")
-        cursor.execute(f"insert into credentials values('{new_id}','{password}')")
+            password = passwordhide.get_hidden_input("Enter your password : ")
+        password = encode.hash_passwd(password)
+        # print(password)
+        cursor.execute(
+            f"insert into credentials values(%s,%s)", (new_id, password))
         print("Kindly enter your details (Fields with (*) are compulsory to enter. Enter a space for other s where you want to leave the field empty)")
         fname = input("Enter your First Name : (*)")
         while is_space(fname):
@@ -160,15 +177,18 @@ def register():
         while is_space(experience):
             print("Kindly enter a valid language")
             language = input("Enter your Language : (*)")
-        visitation_charge = float(input("Enter your Visitation Charge : (*)(Enter in two decimal places)"))
+        visitation_charge = float(
+            input("Enter your Visitation Charge : (*)(Enter in two decimal places)"))
         while is_space(visitation_charge):
             print("Kindly enter a valid visitation charge")
-            visitation_charge = float(input("Enter your Visitation Charge : (*)(Enter in two decimal places)"))
+            visitation_charge = float(
+                input("Enter your Visitation Charge : (*)(Enter in two decimal places)"))
         ip = input("Enter your IP Address : (*)")
         while is_space(ip):
             print("Kindly enter a valid ip address")
             ip = input("Enter your IP Address : (*)")
-        cursor.execute(f"insert into doctors values ('{new_id}','{dname}','{dob}','{gender}','{address}','{specialization}','{license_num}','{age}','{experience}','{department}','{email}','{mobile}','{language}','{visitation_charge}','{ip}')")
+        cursor.execute(
+            f"insert into doctors values ('{new_id}','{dname}','{dob}','{gender}','{address}','{specialization}','{license_num}','{age}','{experience}','{department}','{email}','{mobile}','{language}','{visitation_charge}','{ip}')")
         print("Account created successfully")
         con.commit()
         print("Kindly take a picture for facial recognition")
@@ -179,3 +199,6 @@ def register():
     else:
         print("Invalid Choice")
         print("Kindly enter either 'admin' or 'doctor'")
+
+
+# register()

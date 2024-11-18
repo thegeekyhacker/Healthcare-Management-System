@@ -6,7 +6,8 @@ from datetime import datetime
 import mysql.connector as sqltor
 import sendmail
 
-con = sqltor.connect(host="localhost", user="root", passwd="admin", database="hcm")
+con = sqltor.connect(host="localhost", user="root",
+                     passwd="admin", database="healthcare_management")
 cursor = con.cursor()
 
 
@@ -18,19 +19,23 @@ def opdbill(adminid):
     patientid = input("Enter the Patient Id : ")
     date = datetime.now().strftime("%Y-%m-%d")
     time = datetime.now().strftime("%H:%M:%S")
-    cursor.execute(f"select visitation_charge from doctors where doctor_id = '{doctorid}'")
+    cursor.execute(
+        f"select visitation_charge from doctors where doctor_id = '{doctorid}'")
     data = cursor.fetchall()
     visit_charge = data[0][0]
     amt = 0
     test_names = []
     test_costs = {}
-    cursor.execute(f"select doctor_name from doctors where doctor_id = '{doctorid}'")
+    cursor.execute(
+        f"select doctor_name from doctors where doctor_id = '{doctorid}'")
     data = cursor.fetchall()
     dname = data[0][0]
-    cursor.execute(f"select first_name,middle_name,last_name from patients where patient_id = '{patientid}'")
+    cursor.execute(
+        f"select first_name,middle_name,last_name from patients where patient_id = '{patientid}'")
     data = cursor.fetchall()
     pname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
-    cursor.execute(f"select first_name,middle_name,last_name from administrativestaff where admin_id = '{adminid}'")
+    cursor.execute(
+        f"select first_name,middle_name,last_name from administrativestaff where admin_id = '{adminid}'")
     data = cursor.fetchall()
     aname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
 
@@ -39,7 +44,8 @@ def opdbill(adminid):
         if testname.lower() == "n/a":
             break
         else:
-            cursor.execute(f"select test_cost from testexpenses where test = '{testname}'")
+            cursor.execute(
+                f"select test_cost from testexpenses where test = '{testname}'")
             data = cursor.fetchall()
             if len(data) == 0:
                 print("No such test exists.")
@@ -109,11 +115,12 @@ def opdbill(adminid):
 
     # Save the PDF
     c.save()
-    cursor.execute(f"select email_id from patients where patient_id = '{patientid}'")
+    cursor.execute(
+        f"select email_id from patients where patient_id = '{patientid}'")
     data = cursor.fetchall()
     receive = data[0][0]
     fname = oid + '_bill'
-    sendmail.email(receive,fname)
+    sendmail.email(receive, fname)
     con.close()
 
 

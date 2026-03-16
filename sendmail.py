@@ -5,7 +5,7 @@ from email.mime.application import MIMEApplication
 import smtplib
 
 email_sender = 'utkarsh.tiwary2021@vitstudent.ac.in'
-email_password = '*** *** **** ****'
+email_password = 'maus ncqn dpmk gdgd'
 subject = 'Your Bill'
 body = f"Kindly find your bill attached.\nThank you for choosing our hospital."
 

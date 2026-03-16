@@ -8,7 +8,6 @@ import voice
 import webbrowser
 from pqueue import *  # Import necessary functions and shared_queue object
 
-# h = HospitalScheduler()
 con = sqltor.connect(host="localhost", user="root",
                      passwd="admin", database="healthcare_management")
 cursor = con.cursor()
@@ -19,12 +18,10 @@ def doctor(userid):
         f"SELECT doctor_name from doctors where doctor_id = '{userid}'")
     result = cursor.fetchall()
     dname = result[0][0]
-    # print(dname)
     greet = greeting.greeting()
     greet = greet + ' ' + dname
     print(greet)
     while True:
-        # print(greet)
         print("1. Check your schedule(schedule)\n")
         print("2. Check your appointments(appointments)\n")
         print("3. Check patient details(details)\n")
@@ -60,9 +57,18 @@ def doctor(userid):
             cursor.execute(
                 f"select phone_number from patients where patient_id = '{patientid}'")
             result = cursor.fetchall()
+            if not result:
+                print("Patient not found.")
+                continue
             phone_number = result[0][0]
-            whatsapp_url = f"https://wa.me/{phone_number}"
-            webbrowser.open(whatsapp_url)
+            # Remove any spaces, dashes or brackets from phone number
+            phone_number = phone_number.strip().replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+            # Add + prefix if not already present for international format
+            if not phone_number.startswith("+"):
+                phone_number = "+" + phone_number
+            telegram_url = f"https://t.me/{phone_number}"
+            print(f"Opening Telegram for patient {patientid} at {phone_number}...")
+            webbrowser.open(telegram_url)
         elif ans.lower() == 'logout':
             print("Have a nice day ahead!")
             break

@@ -1,0 +1,11 @@
+mysql-connector-python
+bcrypt
+opencv-python
+numpy
+cmake
+dlib
+face-recognition
+SpeechRecognition
+reportlab
+pyaudio
+pyttsx3

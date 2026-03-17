@@ -4,8 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 import smtplib
 
-email_sender = 'utkarsh.tiwary2021@vitstudent.ac.in'
-email_password = 'maus ncqn dpmk gdgd'
+email_sender = 'utkarshtiwary2004@gmail.com'
+email_password = 'ijoc tysj nffb tnvt'
 subject = 'Your Bill'
 body = f"Kindly find your bill attached.\nThank you for choosing our hospital."
 

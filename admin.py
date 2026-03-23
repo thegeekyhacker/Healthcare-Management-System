@@ -7,9 +7,10 @@ import newpatient
 import opdbill
 import bill
 from pqueue import *
+from config import SQL
 # from pqueue import add_to_queue, display_schedule, shared_queue
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
+con = sqltor.connect(host=SQL.host, user=SQL.user,
+                     passwd=SQL.password, database=SQL.database)
 cursor = con.cursor()
 
 

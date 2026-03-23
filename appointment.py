@@ -1,7 +1,9 @@
 import mysql.connector as sqltor
 import convertdate
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
+from config import SQL
+
+con = sqltor.connect(host=SQL.host, user=SQL.user,
+                     passwd=SQL.password, database=SQL.database)
 cursor = con.cursor()
 
 

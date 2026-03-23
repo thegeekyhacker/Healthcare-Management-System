@@ -5,9 +5,10 @@ from reportlab.lib.utils import ImageReader
 from datetime import datetime
 import mysql.connector as sqltor
 import sendmailh
+from config import SQL
 
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
+con = sqltor.connect(host=SQL.host, user=SQL.user,
+                     passwd=SQL.password, database=SQL.database)
 cursor = con.cursor()
 
 

@@ -1,11 +1,12 @@
 import bcrypt
 import mysql.connector as sqltor
+from config import SQL
 
 SALT_PREFIX = "ujp"
 SALT_SUFFIX = "ujp"
 
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
+con = sqltor.connect(host=SQL.host, user=SQL.user,
+                     passwd=SQL.password, database=SQL.database)
 cursor = con.cursor()
 
 cursor.execute("SELECT User_Id, Password FROM credentials")

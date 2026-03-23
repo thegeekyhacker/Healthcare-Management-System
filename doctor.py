@@ -7,9 +7,10 @@ import details
 import voice
 import webbrowser
 from pqueue import *  # Import necessary functions and shared_queue object
+from config import SQL
 
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
+con = sqltor.connect(host=SQL.host, user=SQL.user,
+                     passwd=SQL.password, database=SQL.database)
 cursor = con.cursor()
 
 

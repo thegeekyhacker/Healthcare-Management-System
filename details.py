@@ -1,11 +1,9 @@
-import mysql.connector as sqltor
 import os
 # import datetime
 from datetime import date, datetime
+from connector import get_db_connection
 
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 
 def calculate_age(birthdate_str):
@@ -63,4 +61,4 @@ def details(patientid):
 
 # Example usage
 # details('P1')
-#
+# To test only this file/feature

@@ -1,8 +1,7 @@
-import encode
-import mysql.connector as sqltor
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+from connector import get_db_connection
+from utility import verify
+
+con, cursor = get_db_connection()
 
 
 def login(username, password):
@@ -16,7 +15,7 @@ def login(username, password):
     else:
         temp_passwd = data[0][0]
         # temp_passwd = encode.decrypt_password(temp_passwd)
-        if encode.verify(password, temp_passwd):
+        if verify(password, temp_passwd):
             print("Logged in Successfully")
             return True
         else:
@@ -26,4 +25,5 @@ def login(username, password):
             return False
 
 
-# login()
+# login()  To test only this file/feature
+

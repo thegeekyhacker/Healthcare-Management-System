@@ -1,4 +1,3 @@
-import mysql.connector as sqltor
 import greeting
 import schedule
 import appointment
@@ -7,10 +6,9 @@ import details
 import voice
 import webbrowser
 from pqueue import *  # Import necessary functions and shared_queue object
+from connector import get_db_connection
 
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 
 def doctor(userid):

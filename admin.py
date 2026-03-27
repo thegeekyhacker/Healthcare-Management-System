@@ -1,4 +1,3 @@
-import mysql.connector as sqltor
 import greeting
 import schedule
 import appointment
@@ -7,23 +6,24 @@ import newpatient
 import opdbill
 import bill
 from pqueue import *
+from connector import get_db_connection
+
 # from pqueue import add_to_queue, display_schedule, shared_queue
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 
 def admin(userid):
     cursor.execute(
-        f"Select first_name,middle_name,last_name from administrativestaff where admin_id = '{userid}'")
+        f"Select first_name,middle_name,last_name from administrativestaff where admin_id = '{userid}'"
+    )
     result = cursor.fetchall()
     first_name = result[0][0]
     middle_name = result[0][1]
     last_name = result[0][2]
-    aname = first_name + ' ' + middle_name + ' ' + last_name
+    aname = first_name + " " + middle_name + " " + last_name
     # print(aname)
     greet = greeting.greeting()
-    greet = greet + ' ' + aname
+    greet = greet + " " + aname
     print(greet)
     while True:
         # print(greet)
@@ -37,32 +37,33 @@ def admin(userid):
         print("8. View queue(view)\n")
         print("9. Logout\n")
         ans = input("Enter the action you want to perform : ")
-        if ans.lower() == 'schedule':
+        if ans.lower() == "schedule":
             doctor_id = input("Enter the Doctor Id : ")
             schedule.schedule(doctor_id)
-        elif ans.lower() == 'appointments':
+        elif ans.lower() == "appointments":
             doctor_id = input("Enter the Doctor Id : ")
             appointment.appointment(doctor_id)
-        elif ans.lower() == 'createapp':
+        elif ans.lower() == "createapp":
             createapp.createapp()
-        elif ans.lower() == 'reg':
+        elif ans.lower() == "reg":
             newpatient.newpatient()
-        elif ans.lower() == 'opdbill':
+        elif ans.lower() == "opdbill":
             opdbill.opdbill(userid)
-        elif ans.lower() == 'hbill':
+        elif ans.lower() == "hbill":
             bill.hbill(userid)
-        elif ans.lower() == 'add':
+        elif ans.lower() == "add":
             doctorid = input("Enter Doctor Id : ")
             patientid = input("Enter patient Id : ")
             add_to_queue(doctorid, patientid)
             # h.display_schedule("D1")
-        elif ans.lower() == 'view':
+        elif ans.lower() == "view":
             docid = input("Enter the Doctor Id : ")
             display_schedule(docid)
-        elif ans.lower() == 'logout':
+        elif ans.lower() == "logout":
             print("Have a nice day ahead!")
             break
         else:
             print("Kindly enter a valid choice")
 
-# admin('A1')
+
+# admin('A1') To test only this file/feature

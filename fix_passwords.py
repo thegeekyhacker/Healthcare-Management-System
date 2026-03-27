@@ -1,21 +1,15 @@
-import bcrypt
-import mysql.connector as sqltor
+from connector import get_db_connection
+from utility import hash_passwd
 
-SALT_PREFIX = "ujp"
-SALT_SUFFIX = "ujp"
-
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 cursor.execute("SELECT User_Id, Password FROM credentials")
 users = cursor.fetchall()
 
 for user_id, plain_password in users:
-    peppered = SALT_PREFIX + plain_password + SALT_SUFFIX
-    hashed = bcrypt.hashpw(peppered.encode('utf-8'), bcrypt.gensalt())
+    hashed = hash_passwd(plain_password)
     cursor.execute("UPDATE credentials SET Password = %s WHERE User_Id = %s",
-                   (hashed.decode('utf-8'), user_id))
+                   (hashed, user_id))
     print(f"Updated password for {user_id}")
 
 con.commit()

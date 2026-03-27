@@ -1,7 +1,6 @@
-import mysql.connector as sqltor
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+from connector import get_db_connection
+
+con, cursor = get_db_connection()
 
 
 def schedule(userid):
@@ -17,4 +16,5 @@ def schedule(userid):
         print(text)
 
 
-# schedule('D1')
+# schedule('D1')  To test only this file/feature
+

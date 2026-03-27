@@ -1,7 +1,6 @@
-import mysql.connector as sqltor
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+from connector import get_db_connection
+
+con, cursor = get_db_connection()
 
 
 def createapp():
@@ -24,4 +23,6 @@ def createapp():
     print("Appointment scheduled successfully")
     con.commit()
     con.close()
-# createapp()
+    
+# createapp() To test only this file/feature
+

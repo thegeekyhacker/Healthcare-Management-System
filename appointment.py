@@ -1,8 +1,7 @@
-import mysql.connector as sqltor
 import convertdate
-con = sqltor.connect(host="localhost", user="root",
-                     passwd="admin", database="healthcare_management")
-cursor = con.cursor()
+from connector import get_db_connection
+
+con, cursor = get_db_connection()
 
 
 def appointment(userid):
@@ -17,4 +16,5 @@ def appointment(userid):
         text = f"You has an appointment with {i[3]} at {i[2]} on {date}."
         print(text)
 
-# appointment('D1')
+# appointment('D1')  To test only this file/feature
+

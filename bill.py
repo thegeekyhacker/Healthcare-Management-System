@@ -1,15 +1,8 @@
-import os
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import ImageReader
 from datetime import datetime
-import mysql.connector as sqltor
-import sendmailh
-from config import SQL
+from connector import get_db_connection
+from utility import create_bill_pdf, send_bill_email
 
-con = sqltor.connect(host=SQL.host, user=SQL.user,
-                     passwd=SQL.password, database=SQL.database)
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 
 def hbill(adminid):
@@ -84,76 +77,31 @@ def hbill(adminid):
     )
     con.commit()
 
-    # Creating PDF
-    pdf_folder = "bills/hbill"
-    if not os.path.exists(pdf_folder):
-        os.makedirs(pdf_folder)
-
-    pdf_file = f"{pdf_folder}/{bid}_bill.pdf"
-    c = canvas.Canvas(pdf_file, pagesize=letter)
-
-    # Add background image
-    background_image = "background.png"
-    c.drawImage(ImageReader(background_image), 0, 0, width=600, height=800)
-
-    # Set font and size for the bill
-    c.setFont("Helvetica", 12)
-
-    # Write bill details to the PDF
-    # Centre align "Hospital OPD Bill"
-    c.setFont("Helvetica-Bold", 16)
-    c.drawCentredString(300, 780, "Hospital Bill")
-
-    # Left-align Date
-    c.setFont("Helvetica", 12)
-    c.drawString(50, 750, f"Date: {date}")
-
-    # Right-align Time
-    c.drawRightString(550, 750, f"Time: {time}")
-
-    # Below Date
-    c.drawString(50, 730, f"Patient Name: {pname}")
-
-    # Below Time
-    c.drawRightString(550, 730, f"Doctor Name: {dname}")
-
-    # Below Patient ID
-    c.drawString(50, 710, f"Bill ID: {bid}")
-
-    # Below Doctor ID
-    c.drawRightString(550, 710, f"Admin Name: {aname}")
-
-    # Write Room Type and Room Cost
-    c.drawString(50, 660, f"Room Type: {roomtype}")
-    c.drawRightString(550, 660, f"Room Cost: {room_cost}")
-
-    # Write test details and costs in a table-like structure
-    c.drawString(50, 640, "Tests")
-    c.drawRightString(550, 640, "Cost")
-
-    for i, testname in enumerate(test_names):
-        y_position = 620 - i * 20
-        c.drawString(50, y_position, f"{testname}")
-        c.drawRightString(550, y_position, f"{test_costs[testname]}")
-
-    # Write Payment Status
-
-    # Write total cost
-    c.drawString(50, 580, f"Doctor Charge: {visit_charge}")
-    c.drawRightString(550, 580, f"Total Test Cost: {amt}")
-    # c.drawString(50, 560, f"Total Room Cost: {room_cost}")
-    c.drawRightString(550, 560, f"Total Cost: {total_cost}")
-    c.drawString(50, 560, f"Payment Status: {payment_status}")
-
-    # Save the PDF
-    c.save()
+    # Create PDF using utility function
+    pdf_file = create_bill_pdf(
+        bill_id=bid,
+        date=date,
+        time=time,
+        patient_name=pname,
+        doctor_name=dname,
+        admin_name=aname,
+        test_names=test_names,
+        test_costs=test_costs,
+        visit_charge=visit_charge,
+        total_test_cost=amt,
+        total_cost=total_cost,
+        bill_type='hospital',
+        room_type=roomtype,
+        room_cost=room_cost,
+        payment_status=payment_status
+    )
     cursor.execute(
         f"select email_id from patients where patient_id = '{patientid}'")
     data = cursor.fetchall()
     receive = data[0][0]
     fname = bid + '_bill'
-    sendmailh.email(receive, fname)
+    send_bill_email(receive, fname, 'hospital')
     con.close()
 
 # Example usage
-# hbill('A1')
+# hbill('A1')  To test only this file/feature

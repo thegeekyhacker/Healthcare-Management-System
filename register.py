@@ -1,13 +1,10 @@
-import mysql.connector as sqltor
 import re
 import capture
 import passwordhide
-import encode
-from config import SQL
+from connector import get_db_connection
+from utility import hash_passwd
 
-con = sqltor.connect(host=SQL.host, user=SQL.user,
-                     passwd=SQL.password, database=SQL.database)
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 
 def is_space(str1):
@@ -50,7 +47,7 @@ def register():
             print("Password is not strong enough")
             print("A strong password must have atleast 1 number, 1 special character, 1 lowercase character, 1 uppercase character and should be atleast 10 characters long")
             password = passwordhide.get_hidden_input("Enter your password : ")
-        password = encode.hash_passwd(password)
+        password = hash_passwd(password)
         # print(password)
         cursor.execute("insert into credentials values(%s,%s)",
                        (new_id, password))
@@ -121,7 +118,7 @@ def register():
             print("Password is not strong enough")
             print("A strong password must have atleast 1 number, 1 special character, 1 lowercase character, 1 uppercase character and should be atleast 10 characters long")
             password = passwordhide.get_hidden_input("Enter your password : ")
-        password = encode.hash_passwd(password)
+        password = hash_passwd(password)
         # print(password)
         cursor.execute(
             f"insert into credentials values(%s,%s)", (new_id, password))
@@ -203,4 +200,5 @@ def register():
         print("Kindly enter either 'admin' or 'doctor'")
 
 
-# register()
+# register()  To test only this file/feature
+

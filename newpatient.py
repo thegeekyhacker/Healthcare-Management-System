@@ -1,9 +1,6 @@
-import mysql.connector as sqltor
-from config import SQL
+from connector import get_db_connection
 
-con = sqltor.connect(host=SQL.host, user=SQL.user,
-                     passwd=SQL.password, database=SQL.database)
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 
 def newpatient():
@@ -27,4 +24,5 @@ def newpatient():
         f"insert into patients values ('{pat_id}','{first_name}','{middle_name}','{last_name}','{dob}','{gender}','{address}','{medHis}','{email_id}','{blood_group}','{phoneno}','{insuranceid}')")
     con.commit()
     con.close()
-# newpatient()
+# newpatient()  To test only this file/feature
+

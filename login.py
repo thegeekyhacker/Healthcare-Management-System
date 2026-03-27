@@ -1,10 +1,7 @@
-import encode
-import mysql.connector as sqltor
-from config import SQL
+from connector import get_db_connection
+from utility import verify
 
-con = sqltor.connect(host=SQL.host, user=SQL.user,
-                     passwd=SQL.password, database=SQL.database)
-cursor = con.cursor()
+con, cursor = get_db_connection()
 
 
 def login(username, password):
@@ -18,7 +15,7 @@ def login(username, password):
     else:
         temp_passwd = data[0][0]
         # temp_passwd = encode.decrypt_password(temp_passwd)
-        if encode.verify(password, temp_passwd):
+        if verify(password, temp_passwd):
             print("Logged in Successfully")
             return True
         else:
@@ -28,4 +25,5 @@ def login(username, password):
             return False
 
 
-# login()
+# login()  To test only this file/feature
+

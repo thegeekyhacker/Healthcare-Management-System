@@ -1,8 +1,11 @@
+"""
+Configuration package for the Healthcare Management System.
+"""
 
-class SQL:
-    """SQL Database Configuration"""
-    host = "localhost"
-    user = "root"
-    password = "mypassword"
-    database = "healthcare_management"
+from .sql_config import SQL
+from .email_config import Email
 
+__all__ = [
+    'SQL',
+    'Email'
+]

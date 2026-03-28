@@ -3,4 +3,6 @@
 /bills/*
 /Attendance/*
 *.pyc
-.env                                                                                                                                                                                                                                                                                                                                                                                                            
+.env
+/bills/*
+/Images/*

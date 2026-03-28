@@ -1,14 +1,11 @@
-import greeting
-import login
-import register
-import login_face
-import doctor
-import admin
-import passwordhide
+from services import auth_service
+from ui import admin, doctor
+from utility.greeting import greeting
+from utility.passwordhide import get_hidden_input
 
 while True:
     print("Welcome to the Healthcare Management System")
-    print(greeting.greeting())
+    print(greeting())
     print("1. Login")
     print("2. Register")
     print("3. Exit")
@@ -21,27 +18,27 @@ while True:
         if log_ans.lower() == "pass":
             while True:
                 userid = input("Enter the Username : ")
-                passwd = passwordhide.get_hidden_input("Enter the Password : ")
-                if login.login(userid,passwd):
+                passwd = get_hidden_input("Enter the Password : ")
+                if auth_service.login(userid, passwd):
                     if userid[0] == 'D':
-                        doctor.doctor(userid)
+                        doctor(userid)
                         break
                     else:
-                        admin.admin(userid)
+                        admin(userid)
                         break
         elif log_ans.lower() == "face":
             while True:
                 userid = input("Enter the Username : ")
-                if login_face.login_face(userid):
+                if auth_service.login_face(userid):
                     if userid[0] == 'D':
-                        doctor.doctor(userid)
+                        doctor(userid)
                         break
                     else:
-                        admin.admin(userid)
+                        admin(userid)
                         break
 
     elif ans.lower() == 'register':
-        register.register()
+        auth_service.register()
     elif ans.lower() == 'exit':
         print("Have a nice day ahead!")
         exit(0)

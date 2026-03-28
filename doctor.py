@@ -3,9 +3,10 @@ import schedule
 import appointment
 import prescribe
 import details
-import voice
 import webbrowser
 from pqueue import *  # Import necessary functions and shared_queue object
+
+from utility import text_to_speech
 from utility.sql_util import fetch_all
 
 
@@ -43,7 +44,7 @@ def doctor(userid):
             removed_patient = remove_from_queue("D1")
             if removed_patient:
                 print(f"Patient {removed_patient} please come in.")
-                voice.text_to_speech(
+                text_to_speech(
                     f"Patient {removed_patient} please come in.")
             else:
                 print("No patients in the queue for this doctor.")

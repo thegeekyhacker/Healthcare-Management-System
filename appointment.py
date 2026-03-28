@@ -1,4 +1,4 @@
-import convertdate
+
 from utility.sql_util import fetch_all
 
 
@@ -8,8 +8,6 @@ def appointment(userid):
     # print(data)
     for i in data:
         date = i[1]
-        # date = date.replace("-", " ")
-        # date = convertdate.convert_date_format(date)
         text = f"You has an appointment with {i[3]} at {i[2]} on {date}."
         print(text)
 

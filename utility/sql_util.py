@@ -3,7 +3,7 @@ SQL helpers: transactions and query execution.
 Connection lifecycle is delegated to connector.mysql_connector (import only here).
 """
 
-from mysql_connector import MySQLConnector
+from connector import MySQLConnector
 
 
 def _cursor():

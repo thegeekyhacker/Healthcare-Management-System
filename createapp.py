@@ -1,11 +1,13 @@
-from connector import get_db_connection
-
-con, cursor = get_db_connection()
+from utility.sql_util import (
+    fetch_all,
+    execute_query,
+    commit_transaction,
+    close_db_connection,
+)
 
 
 def createapp():
-    cursor.execute("Select * from appointments")
-    data = cursor.fetchall()
+    data = fetch_all("Select * from appointments")
     count = len(data)
     app_id = count+1
     app_date = input("Enter the appointment date in YYYY-MM-DD format : ")
@@ -18,11 +20,10 @@ def createapp():
     department = input("Enter the department : ")
     patientid = input("Enter patient id : ")
     doctorid = input("Enter doctor id : ")
-    cursor.execute(
+    execute_query(
         f"insert into appointments values ({app_id},'{app_date}','{app_time}','{pname}',{scheduled},{canceled},{completed},'{specialization}','{department}','{patientid}','{doctorid}')")
     print("Appointment scheduled successfully")
-    con.commit()
-    con.close()
-    
-# createapp() To test only this file/feature
+    commit_transaction()
+    close_db_connection()
 
+# createapp() To test only this file/feature

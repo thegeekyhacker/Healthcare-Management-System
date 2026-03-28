@@ -1,11 +1,13 @@
-from connector import get_db_connection
-
-con, cursor = get_db_connection()
+from utility.sql_util import (
+    fetch_all,
+    execute_query,
+    commit_transaction,
+    close_db_connection,
+)
 
 
 def newpatient():
-    cursor.execute("Select * from appointments")
-    data = cursor.fetchall()
+    data = fetch_all("Select * from appointments")
     count = len(data)
     pat_id = "P"+str(count)
     print(pat_id)
@@ -20,9 +22,8 @@ def newpatient():
     blood_group = input("Enter the patient's blood group :")
     phoneno = input("Enter the patient's phone number :")
     insuranceid = input("Enter the patient's Insurance id :")
-    cursor.execute(
+    execute_query(
         f"insert into patients values ('{pat_id}','{first_name}','{middle_name}','{last_name}','{dob}','{gender}','{address}','{medHis}','{email_id}','{blood_group}','{phoneno}','{insuranceid}')")
-    con.commit()
-    con.close()
+    commit_transaction()
+    close_db_connection()
 # newpatient()  To test only this file/feature
-

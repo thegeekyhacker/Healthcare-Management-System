@@ -1,13 +1,15 @@
 from datetime import datetime
-from connector import get_db_connection
+from utility.sql_util import (
+    fetch_all,
+    execute_query,
+    commit_transaction,
+    close_db_connection,
+)
 from utility import create_bill_pdf, send_bill_email
-
-con, cursor = get_db_connection()
 
 
 def hbill(adminid):
-    cursor.execute("select * from bill")
-    data = cursor.fetchall()
+    data = fetch_all("select * from bill")
     bid = 'B' + str(len(data) + 1)
     doctorid = input("Enter the Doctor Id: ")
     patientid = input("Enter the Patient Id: ")
@@ -17,19 +19,17 @@ def hbill(adminid):
 
     date = datetime.now().strftime("%Y-%m-%d")
     time = datetime.now().strftime("%H:%M:%S")
-    cursor.execute(
+    data = fetch_all(
         f"select visitation_charge from doctors where doctor_id = '{doctorid}'")
-    data = cursor.fetchall()
     visit_charge = data[0][0]
 
     # Get Room Type and calculate Room Cost
     roomtype = input("Enter the Room Type (Double/Single/Suite): ")
-    cursor.execute(
+    data = fetch_all(
         f"select Room_Cost from roomexpenses where Room_Type = '{roomtype}'")
-    data = cursor.fetchall()
     if not data:
         print("Invalid Room Type. Please enter a valid room type.")
-        con.close()
+        close_db_connection()
         return
 
     room_cost = data[0][0]
@@ -37,17 +37,14 @@ def hbill(adminid):
     amt = 0
     test_names = []
     test_costs = {}
-    cursor.execute(
+    data = fetch_all(
         f"select doctor_name from doctors where doctor_id = '{doctorid}'")
-    data = cursor.fetchall()
     dname = data[0][0]
-    cursor.execute(
+    data = fetch_all(
         f"select first_name,middle_name,last_name from patients where patient_id = '{patientid}'")
-    data = cursor.fetchall()
     pname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
-    cursor.execute(
+    data = fetch_all(
         f"select first_name,middle_name,last_name from administrativestaff where admin_id = '{adminid}'")
-    data = cursor.fetchall()
     aname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
 
     while True:
@@ -55,9 +52,8 @@ def hbill(adminid):
         if testname.lower() == "n/a":
             break
         else:
-            cursor.execute(
+            data = fetch_all(
                 f"select test_cost from testexpenses where test = '{testname}'")
-            data = cursor.fetchall()
             if not data:
                 print("No such test exists.")
                 print("Kindly enter a valid test name")
@@ -72,10 +68,10 @@ def hbill(adminid):
     payment_status = input(
         "Enter the Payment Status (e.g., Paid, Pending, etc.): ")
 
-    cursor.execute(
+    execute_query(
         f"insert into bill values ('{bid}','{date}',{total_cost},'{payment_status}','{time}','{patientid}','{adminid}','{doctorid}','{roomtype}','{','.join(test_names)}')"
     )
-    con.commit()
+    commit_transaction()
 
     # Create PDF using utility function
     pdf_file = create_bill_pdf(
@@ -95,13 +91,12 @@ def hbill(adminid):
         room_cost=room_cost,
         payment_status=payment_status
     )
-    cursor.execute(
+    data = fetch_all(
         f"select email_id from patients where patient_id = '{patientid}'")
-    data = cursor.fetchall()
     receive = data[0][0]
     fname = bid + '_bill'
     send_bill_email(receive, fname, 'hospital')
-    con.close()
+    close_db_connection()
 
 # Example usage
 # hbill('A1')  To test only this file/feature

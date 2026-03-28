@@ -1,9 +1,7 @@
 import os
 # import datetime
 from datetime import date, datetime
-from connector import get_db_connection
-
-con, cursor = get_db_connection()
+from utility.sql_util import fetch_all
 
 
 def calculate_age(birthdate_str):
@@ -21,9 +19,8 @@ def calculate_age(birthdate_str):
 
 
 def details(patientid):
-    cursor.execute(
+    data = fetch_all(
         f"select first_name, middle_name, last_name, date_of_birth, gender, medical_history, blood_group from patients where patient_id = '{patientid}'")
-    data = cursor.fetchall()
 
     pname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
     age = calculate_age(data[0][3])

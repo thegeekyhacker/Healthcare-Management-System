@@ -1,10 +1,8 @@
 import re
 import capture
 import passwordhide
-from connector import get_db_connection
+from utility.sql_util import fetch_all, execute_query, commit_transaction
 from utility import hash_passwd
-
-con, cursor = get_db_connection()
 
 
 def is_space(str1):
@@ -34,8 +32,7 @@ def register():
     choice = input("Kindly enter your choice : ")
     if choice.lower() == 'admin':
         query = f"select admin_id from administrativestaff"
-        cursor.execute(query)
-        data = cursor.fetchall()
+        data = fetch_all(query)
         if not data:
             new_num = 1
         else:
@@ -49,8 +46,8 @@ def register():
             password = passwordhide.get_hidden_input("Enter your password : ")
         password = hash_passwd(password)
         # print(password)
-        cursor.execute("insert into credentials values(%s,%s)",
-                       (new_id, password))
+        execute_query("insert into credentials values(%s,%s)",
+                      (new_id, password))
         print("Kindly enter your details (Fields with (*) are compulsory to enter. Enter a space for others where you want to leave the field empty)")
         fname = input("Enter your First Name : (*)")
         while is_space(fname):
@@ -91,10 +88,10 @@ def register():
         while is_space(ip):
             print("Kindly enter a valid IP Address")
             ip = input("Enter your IP Address : (*)")
-        cursor.execute(
+        execute_query(
             f"insert into administrativestaff values ('{new_id}','{fname}','{mname}','{lname}','{dob}','{gender}','{address}','{position}','{phone}','{email}','{ip}')")
         print("Account created successfully")
-        con.commit()
+        commit_transaction()
         print("Kindly take a picture for facial recognition")
         print("When the webcam window opens press 's' after you are happy with your face in the webcam and save the picture.")
         print("Else press 'q' to quit")
@@ -102,8 +99,7 @@ def register():
 
     elif choice.lower() == 'doctor':
         query = f"select doctor_id from doctors"
-        cursor.execute(query)
-        data = cursor.fetchall()
+        data = fetch_all(query)
         if len(data) == 0:
             new_id = 'D1'
         else:
@@ -120,7 +116,7 @@ def register():
             password = passwordhide.get_hidden_input("Enter your password : ")
         password = hash_passwd(password)
         # print(password)
-        cursor.execute(
+        execute_query(
             f"insert into credentials values(%s,%s)", (new_id, password))
         print("Kindly enter your details (Fields with (*) are compulsory to enter. Enter a space for other s where you want to leave the field empty)")
         fname = input("Enter your First Name : (*)")
@@ -186,10 +182,10 @@ def register():
         while is_space(ip):
             print("Kindly enter a valid ip address")
             ip = input("Enter your IP Address : (*)")
-        cursor.execute(
+        execute_query(
             f"insert into doctors values ('{new_id}','{dname}','{dob}','{gender}','{address}','{specialization}','{license_num}','{age}','{experience}','{department}','{email}','{mobile}','{language}','{visitation_charge}','{ip}')")
         print("Account created successfully")
-        con.commit()
+        commit_transaction()
         print("Kindly take a picture for facial recognition")
         print("When the webcam window opens press 's' after you are happy with your face in the webcam and save the picture.")
         print("Else press 'q' to quit")
@@ -201,4 +197,3 @@ def register():
 
 
 # register()  To test only this file/feature
-

@@ -1,15 +1,11 @@
-from connector import get_db_connection
-
-con, cursor = get_db_connection()
+from utility.sql_util import fetch_all
 
 
 def schedule(userid):
-    cursor.execute(
+    data = fetch_all(
         f"select day,type_of_work,time from doctorschedules where doctor_id = '{userid}'")
-    data = cursor.fetchall()
-    cursor.execute(
+    result = fetch_all(
         f"SELECT doctor_name from doctors where doctor_id = '{userid}'")
-    result = cursor.fetchall()
     # print(data)
     for i in data:
         text = f"{result[0][0]} has {i[1]} on {i[0]} from {i[2]}."
@@ -17,4 +13,3 @@ def schedule(userid):
 
 
 # schedule('D1')  To test only this file/feature
-

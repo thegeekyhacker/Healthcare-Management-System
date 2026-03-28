@@ -1,19 +1,4 @@
-"""
-Connector package for database connections.
-"""
+"""Low-level DB connector package. Application code should use utility.sql_util."""
+from .mysql_connector import MySQLConnector
 
-from .mysql_connector import (
-    MySQLConnector,
-    get_db_connection,
-    close_db_connection,
-    commit_transaction,
-    rollback_transaction
-)
-
-__all__ = [
-    'MySQLConnector',
-    'get_db_connection',
-    'close_db_connection',
-    'commit_transaction',
-    'rollback_transaction'
-]
+__all__ = ['MySQLConnector']

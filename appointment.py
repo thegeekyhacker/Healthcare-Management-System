@@ -1,13 +1,10 @@
 import convertdate
-from connector import get_db_connection
-
-con, cursor = get_db_connection()
+from utility.sql_util import fetch_all
 
 
 def appointment(userid):
-    cursor.execute(
+    data = fetch_all(
         f"select * from appointments where doctor_id = '{userid}' and scheduled = 1")
-    data = cursor.fetchall()
     # print(data)
     for i in data:
         date = i[1]
@@ -17,4 +14,3 @@ def appointment(userid):
         print(text)
 
 # appointment('D1')  To test only this file/feature
-

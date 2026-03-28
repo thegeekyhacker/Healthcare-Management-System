@@ -1,36 +1,34 @@
 from datetime import datetime
-from connector import get_db_connection
+from utility.sql_util import (
+    fetch_all,
+    execute_query,
+    commit_transaction,
+    close_db_connection,
+)
 from utility import create_bill_pdf, send_bill_email
-
-con, cursor = get_db_connection()
 
 
 def opdbill(adminid):
-    cursor.execute("select * from opdbill")
-    data = cursor.fetchall()
+    data = fetch_all("select * from opdbill")
     oid = 'O' + str(len(data) + 1)
     doctorid = input("Enter the Doctor Id : ")
     patientid = input("Enter the Patient Id : ")
     date = datetime.now().strftime("%Y-%m-%d")
     time = datetime.now().strftime("%H:%M:%S")
-    cursor.execute(
+    data = fetch_all(
         f"select visitation_charge from doctors where doctor_id = '{doctorid}'")
-    data = cursor.fetchall()
     visit_charge = data[0][0]
     amt = 0
     test_names = []
     test_costs = {}
-    cursor.execute(
+    data = fetch_all(
         f"select doctor_name from doctors where doctor_id = '{doctorid}'")
-    data = cursor.fetchall()
     dname = data[0][0]
-    cursor.execute(
+    data = fetch_all(
         f"select first_name,middle_name,last_name from patients where patient_id = '{patientid}'")
-    data = cursor.fetchall()
     pname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
-    cursor.execute(
+    data = fetch_all(
         f"select first_name,middle_name,last_name from administrativestaff where admin_id = '{adminid}'")
-    data = cursor.fetchall()
     aname = data[0][0] + ' ' + data[0][1] + ' ' + data[0][2]
 
     while True:
@@ -38,9 +36,8 @@ def opdbill(adminid):
         if testname.lower() == "n/a":
             break
         else:
-            cursor.execute(
+            data = fetch_all(
                 f"select test_cost from testexpenses where test = '{testname}'")
-            data = cursor.fetchall()
             if len(data) == 0:
                 print("No such test exists.")
                 print("Kindly enter a valid test name")
@@ -50,9 +47,9 @@ def opdbill(adminid):
             test_costs[testname] = data[0][0]
 
     total_cost = visit_charge + amt
-    cursor.execute(
+    execute_query(
         f"insert into opdbill values ('{date}','{time}','{patientid}','{doctorid}','{oid}','{adminid}',{total_cost})")
-    con.commit()
+    commit_transaction()
 
     # Create PDF using utility function
     pdf_file = create_bill_pdf(
@@ -69,13 +66,12 @@ def opdbill(adminid):
         total_cost=total_cost,
         bill_type='opd'
     )
-    cursor.execute(
+    data = fetch_all(
         f"select email_id from patients where patient_id = '{patientid}'")
-    data = cursor.fetchall()
     receive = data[0][0]
     fname = oid + '_bill'
     send_bill_email(receive, fname, 'opd')
-    con.close()
+    close_db_connection()
 
 
 # Example usage

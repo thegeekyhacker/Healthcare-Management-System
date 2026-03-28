@@ -10,3 +10,4 @@ reportlab
 pyaudio
 pyttsx3
 pqueue
+python-dotenv

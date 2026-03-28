@@ -6,17 +6,15 @@ import newpatient
 import opdbill
 import bill
 from pqueue import *
-from connector import get_db_connection
+from utility.sql_util import fetch_all
 
 # from pqueue import add_to_queue, display_schedule, shared_queue
-con, cursor = get_db_connection()
 
 
 def admin(userid):
-    cursor.execute(
+    result = fetch_all(
         f"Select first_name,middle_name,last_name from administrativestaff where admin_id = '{userid}'"
     )
-    result = cursor.fetchall()
     first_name = result[0][0]
     middle_name = result[0][1]
     last_name = result[0][2]

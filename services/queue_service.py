@@ -2,6 +2,8 @@ import json
 
 queue_file_path = 'queue/queue_data.json'
 queue_data = {}
+
+
 def add_to_queue(doctor_id, patient_id):
     with open(queue_file_path, 'r') as file:
         queue_data = json.load(file)
@@ -13,6 +15,7 @@ def add_to_queue(doctor_id, patient_id):
 
     with open(queue_file_path, 'w') as file:
         json.dump(queue_data, file)
+
 
 def remove_from_queue(doctor_id):
     with open(queue_file_path, 'r') as file:
@@ -28,6 +31,7 @@ def remove_from_queue(doctor_id):
 
     return removed_patient
 
+
 def display_schedule(doctor_id):
     with open(queue_file_path, 'r') as file:
         queue_data = json.load(file)
@@ -36,5 +40,6 @@ def display_schedule(doctor_id):
         print(f"No patients in the queue for doctor {doctor_id}.")
     else:
         print(f"Queue for doctor {doctor_id}: {queue_data[doctor_id]}")
+
 
 shared_queue = queue_data

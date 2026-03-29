@@ -8,6 +8,7 @@ from .mail_util import send_bill_email
 from .voice_util import text_to_speech
 from .greeting import greeting
 from .passwordhide import get_hidden_input
+from .sql_util import fetch_all, fetch_one, execute_query, commit_transaction, close_db_connection
 
 __all__ = [
     'create_bill_pdf',
@@ -17,4 +18,9 @@ __all__ = [
     'text_to_speech',
     'greeting',
     'get_hidden_input',
+    'fetch_all',
+    'fetch_one',
+    'execute_query',
+    'commit_transaction',
+    'close_db_connection',
 ]

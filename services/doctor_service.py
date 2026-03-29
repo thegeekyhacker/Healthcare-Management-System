@@ -3,7 +3,7 @@ import os
 
 import speech_recognition as sr
 
-from utility.sql_util import fetch_all
+from utility.sql_util import fetch_all, execute_query, commit_transaction
 
 
 def get_doctor_display_name(doctor_id):
@@ -99,7 +99,7 @@ def prescribe(doctorid, patientid, appointmentid):
 
     instructions_dict = {}
 
-    print("List of Inputted Medicines:")
+    print("List of Inputed Medicines:")
     for idx, medicine in enumerate(medicines_list, start=1):
         print(f"{idx}. {medicine}")
 
@@ -173,3 +173,67 @@ def prescribe(doctorid, patientid, appointmentid):
                 file.write(f"   Instruction {info['instructions'][i]} Eat During {info['timings'][i]}\n")
 
     print(f"\nPrescription has been written to {filename}")
+
+    # Save prescription to database
+    try:
+        # Generate prescription ID by getting the last ID and incrementing
+        last_id_query = "SELECT Prescription_ID FROM prescription ORDER BY Prescription_ID DESC LIMIT 1"
+        last_id_result = fetch_all(last_id_query)
+        
+        if last_id_result and last_id_result[0][0]:
+            # Extract number from last ID (e.g., "PS5" -> 5)
+            last_id = last_id_result[0][0]
+            last_num = int(last_id.replace('PS', ''))
+            new_num = last_num + 1
+        else:
+            # No prescriptions exist yet, start with 1
+            new_num = 1
+        
+        prescription_id = f"PS{new_num}"
+        
+        # Format medications as comma-separated list (max 100 chars)
+        medications = ', '.join(medicines_list)
+        if len(medications) > 100:
+            medications = medications[:97] + '...'
+        
+        # Format instructions and dosage
+        instructions_text = []
+        dosage_text = []
+        for medicine, info in instructions_dict.items():
+            for i in range(len(info['instructions'])):
+                instructions_text.append(f"{medicine}: {info['instructions'][i]} - {info['timings'][i]}")
+                dosage_text.append(f"{medicine}: {info['instructions'][i]}")
+        
+        # Truncate to fit database limits
+        instructions_str = '; '.join(instructions_text)
+        if len(instructions_str) > 100:
+            instructions_str = instructions_str[:97] + '...'
+        
+        dosage_str = '; '.join(dosage_text)
+        if len(dosage_str) > 20:
+            dosage_str = dosage_str[:17] + '...'
+        
+        # Insert into prescription table
+        insert_query = """
+            INSERT INTO prescription
+            (Prescription_ID, Date, Medications, Instructions, Dosage, Doctor_ID, Patient_ID, Appointment_ID)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        
+        execute_query(insert_query, (
+            prescription_id,
+            current_date,
+            medications,
+            instructions_str,
+            dosage_str,
+            doctorid,
+            patientid,
+            str(appointmentid)
+        ))
+        
+        commit_transaction()
+        print(f"Prescription saved to database with ID: {prescription_id}")
+        
+    except Exception as e:
+        print(f"Error saving prescription to database: {e}")
+        print("Prescription file was created successfully, but database entry failed.")

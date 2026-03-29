@@ -1,3 +1,4 @@
+mcp
 mysql-connector-python
 bcrypt
 opencv-python
